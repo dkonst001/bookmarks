@@ -14,7 +14,7 @@ import { RepositoryBlService } from '../shared/repository-bl.service';
 
       <app-ui-search-items (doSubmit)= "onRepositories($event)" [itemsName] = "'repository'"></app-ui-search-items>
     </div>
-    <app-ui-gallery  [galleryItems] = "repositoryBlService.repositories" [action]= "'Bookmark'"></app-ui-gallery>
+    <app-ui-gallery  [galleryItems] = "repositoryBlService.repositories" [action]= "action"></app-ui-gallery>
 
   `,
   styleUrls: ['./repositories.component.css']
@@ -22,13 +22,22 @@ import { RepositoryBlService } from '../shared/repository-bl.service';
 export class RepositoriesComponent implements OnInit {
 
   subscription: Subscription;
+  action = 'Bookmark';
 
   constructor(private uiRepositoryActionService: UiRepositoryActionService,
               public repositoryBlService: RepositoryBlService) { }
 
   ngOnInit() {
 
-    this.subscription = this.uiRepositoryActionService.getAction().subscribe(id => this.onBookmark(id));
+    this.subscription = this.uiRepositoryActionService.getAction().subscribe(request => {
+      if (request.action === this.action) {
+        this.onBookmark(request.id)
+      }
+      if (request.action === 'reset') {
+        this.onReset(request.id)
+      }
+
+    });
 
   }
 
@@ -41,6 +50,12 @@ export class RepositoriesComponent implements OnInit {
   onBookmark(id: number){
 
     this.repositoryBlService.bookmarkRepository(id);
+
+  }
+
+  onReset(id: number){
+
+    this.repositoryBlService.bookmarkReset(id);
 
   }
 

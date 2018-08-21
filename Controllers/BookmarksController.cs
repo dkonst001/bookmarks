@@ -9,12 +9,16 @@ namespace isracard.Controllers
 {
     [Route("api/[controller]")]
     //[ApiController]
-    public class BookmarksController : ControllerBase
+	public class BookmarksController : ControllerBase
     {
-		string key = "my-key";
+		/// <summary>
+		/// Rest API's to handle session cache
+		/// </summary>
+		/// 
+		string key = "repositoryBookmarks";
 
 		// GET: api/Bookmarks
-		[HttpGet("[action]")]
+		[HttpGet]
 		public IEnumerable<Item> Get()
         {
 			var sessionItems = HttpContext.Session.Get<Item[]>(key);
@@ -22,8 +26,8 @@ namespace isracard.Controllers
         }
 
 		// POST: api/Bookmarks
-		[HttpPost("[action]")]
-		public int BookmarkRepository([FromBody] Item item)
+		[HttpPost]
+		public int Post([FromBody] Item item)
 		{
 			var sessionItems = HttpContext.Session.Get<Item[]>(key);
 			if (sessionItems != null)
@@ -50,24 +54,24 @@ namespace isracard.Controllers
 			return item.id;
 		}
 
-		// POST: api/Bookmarks
-		[HttpPost("[action]")]
-		public int unBookmarkRepository([FromBody] Item item)
+		// Delete: api/Bookmarks
+		[HttpDelete("{id}")]
+		public IEnumerable<Item> Delete(int id)
 		{
-			
+			// Get the session cache
 			var sessionItems = HttpContext.Session.Get<Item[]>(key);
 			if (sessionItems != null)
 			{
-				var bookmarks = new List<Item>(sessionItems);
-				var index = bookmarks.IndexOf(item);
-				bookmarks.RemoveAt(index);
-				sessionItems = bookmarks.ToArray();
+				var items = new List<Item>(sessionItems);
+				var itemToRemove = items.Single(i => i.id == id);
+				items.Remove(itemToRemove);
+				sessionItems = items.ToArray();
 			}
 
 			HttpContext.Session.Set<Item[]>(key, sessionItems);
-			var sessionItems2 = HttpContext.Session.Get<Item[]>(key);
+			// sessionItems = HttpContext.Session.Get<Item[]>(key);
 
-			return item.id;
+			return sessionItems;
 		}
 
 		// PUT: api/Bookmarks/5

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { startWith } from 'rxjs/operators';
 
 @Injectable()
 export class UiRepositoryActionService {
@@ -9,8 +10,9 @@ export class UiRepositoryActionService {
 
   constructor() { }
 
-  sendAction(id: number) {
-    this.subject.next(id);
+  sendAction(id: number, action: string) {
+    this.subject.next({id: id, action: action})
+    ;
   }
 
 

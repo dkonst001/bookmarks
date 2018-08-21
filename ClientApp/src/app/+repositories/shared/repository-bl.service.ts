@@ -4,7 +4,7 @@ import { RepositoryProxyService } from './repository-proxy.service';
 
 @Injectable()
 export class RepositoryBlService {
-
+  // Repository business logic
   repositories: Repository[];
   result: any;
   isSearching = false;
@@ -15,7 +15,8 @@ export class RepositoryBlService {
     this.isSearching = true;
     this.repositoryProxyService.searchtRepositories(searchKeyword).subscribe(result => {
       this.result = result;
-      // console.log('result', this.result);
+      // To keep the app indifferent to possible future github changes,
+      // only the nessassary attributes are kept structured by Repository interface.
       this.repositories = this.result.items.map( item =>
         <Repository>{
         id: item.id,
@@ -24,7 +25,6 @@ export class RepositoryBlService {
         isBookmarked: false
       });
       this.isSearching = false;
-      // console.log('repositories', this.repositories);
     }, error => console.error(error));
 
   }
@@ -34,17 +34,24 @@ export class RepositoryBlService {
     const item = this.getItem(id);
 
     this.repositoryProxyService.bookmarkRepository(item).subscribe(result => {
-
-      // console.log('result', this.result);
       const reoository = this.repositories.find( r => r.id === result)
       reoository.isBookmarked = true;
-      // console.log('repositories after update', this.repositories);
     }, error => console.error(error));
+  }
+
+  bookmarkReset(id: number): any {
+    const repository = this.getRepository(id);
+    repository.isBookmarked = false;
   }
 
   getItem(id: number): any {
     const item = this.result.items.find(i => i.id === id)
     return item;
+  }
+
+  getRepository(id: number): Repository {
+    const repository = this.repositories.find(i => i.id === id)
+    return repository;
   }
 
 }

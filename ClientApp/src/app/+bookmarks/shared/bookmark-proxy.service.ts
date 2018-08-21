@@ -18,15 +18,15 @@ export class BookmarkProxyService {
 
   get(): Observable<any[]> {
 
-    const requestUrl = this.baseUrl + 'api/Bookmarks/Get';
+    const requestUrl = this.baseUrl;
 
     return this.http.get<any[]>(requestUrl);
 
   }
 
-   /** POST: add a new Group to the database */
-   unBookmarkRepository (item: any): Observable<any> {
-    const requestUrl = this.baseUrl + 'api/Bookmarks/BookmarkRepository';
+   /** Delete: delete bookmark from cache */
+   delete (id: number): Observable<any> {
+    const requestUrl = `${this.baseUrl}/${id}`;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
@@ -34,7 +34,7 @@ export class BookmarkProxyService {
       })
     };
 
-    return this.http.post<any>(requestUrl, {id: item.id, item: item} , httpOptions);
+    return this.http.delete<any>(requestUrl);
   }
 
 }

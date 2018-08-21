@@ -36,7 +36,7 @@ export class UiRepositoryComponent implements OnInit {
 
   action() {
 
-    this.uiRepositoryActionService.sendAction(this.repository.id);
+    this.uiRepositoryActionService.sendAction(this.repository.id, this.actionName);
 
   }
 

@@ -13,7 +13,7 @@ import { BookmarkBlService } from '../shared/bookmark-bl.service';
     <app-ui-spinner [isWorking]="bookmarkBlService.isSearching"></app-ui-spinner>
 
   </div>
-  <app-ui-gallery  [galleryItems] = "bookmarkBlService.bookmarks" [action]= "'UnBookmark'"></app-ui-gallery>
+  <app-ui-gallery  [galleryItems] = "bookmarkBlService.bookmarks" [action]= "action"></app-ui-gallery>
 
 `
   ,
@@ -22,19 +22,24 @@ import { BookmarkBlService } from '../shared/bookmark-bl.service';
 export class BookmarksComponent implements OnInit {
 
   subscription: Subscription;
+  action = 'UnBookmark';
 
   constructor(private uiRepositoryActionService: UiRepositoryActionService,
-              public bookmarkBlService: BookmarkBlService) { }
+              public bookmarkBlService: BookmarkBlService) {
 
+            }
   ngOnInit() {
 
     this.bookmarkBlService.get();
 
-    this.subscription = this.uiRepositoryActionService.getAction().subscribe(id => this.onUnBookmark(id));
-
+    this.subscription = this.uiRepositoryActionService.getAction().subscribe(request => {
+      if (request.action === this.action) {
+        this.onUnBookmark(request.id)
+      }
+    });
   }
 
-  onUnBookmark(id: number){
+  onUnBookmark(id: number) {
 
     this.bookmarkBlService.unBookmarkRepository(id);
 

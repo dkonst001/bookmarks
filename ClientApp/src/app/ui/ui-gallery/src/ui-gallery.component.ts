@@ -1,6 +1,8 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Inject } from '@angular/core';
+
 
 @Component({
+  // "Dumb" (UI only) component  that handles genral gallery presentation. The shape of the gallery item is not the concern on the gallery.
   selector: 'app-ui-gallery',
   template: `
     <div class="container" *ngIf= "galleryItems">
@@ -24,21 +26,25 @@ export class UiGalleryComponent implements OnInit, OnChanges {
   colIndexes: number[];
   itemsInRow = 4;
 
-  constructor() { }
+  constructor(@Inject('ITEMS_IN_ROW') itemsInRow: number) {
+
+      this.itemsInRow = itemsInRow;
+  }
 
   ngOnInit() {
   }
 
   ngOnChanges(){
-    // console.log('num of items recived in gallery', this.galleryItems ? this.galleryItems.length : 0 );
+    // set the gallery dimentions. i.e. num of rows accourding to items per row
     const reminder = this.galleryItems ? this.galleryItems.length % this.itemsInRow : 0;
     const additionalLine = reminder > 0 ? 1 : 0;
     const numOfRows = this.galleryItems ? ((this.galleryItems.length - reminder) / this.itemsInRow) + additionalLine : 0;
+    // vectors for 2 ngFor directives (rows and columns)
     this.rowIndexes = Array.from(Array(numOfRows).keys());
-    // console.log('num of rows', this.rowIndexes.length);
     this.colIndexes = Array.from(Array(this.galleryItems ? this.itemsInRow : 0).keys());
 
   }
+
   getNextGalleryItem (rowIndex: number, colIndex: number) {
 
     const index = rowIndex * this.itemsInRow + colIndex;
